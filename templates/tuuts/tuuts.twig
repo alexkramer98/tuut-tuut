@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="p-2">
+    <div class="mb-2">
+        <h4>New tuut</h4>
+        <button type="button" class="btn btn-success">
+            <a href="{{ path('create-tuut') }}" class="text-white"><img src="{{asset('build/bell.png')}}" alt="Tuut!" width="100%"></a>
+        </button>
+    </div>
+    <div>
+    <h4>Pending Tuuts</h4>
+    <p>These Tuuts still need to be answered by you!</p>
+    {% if not pendingTuuts %}
+        <p>
+            <em>No tuuts pending, good job!</em>
+        </p>
+    {% endif %}
+    {% for tuut in pendingTuuts %}
+        <div class="card mb-1">
+            <div class="card-body">
+                <p>At {{ tuut.datetime|date }}</p>
+                {% if tuut.initiator %}
+                    {{ tuut.initiator.username  }}
+                {% else %}
+                    <i>pending</i>
+                {% endif %}
+                =>
+                {% if tuut.receiver %}
+                    {{ tuut.receiver.username }}
+                {% else %}
+                    <i>pending</i>
+                {% endif %}
+                <div>
+                    {% for name, path in actions %}
+                        <button class="btn btn-primary"><a href="{{ path(path, {tuutId: tuut.id}) }}" class="text-white">{{ name }}</a></button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <h4>Tuuts waiting for approval</h4>
+    <p>These Tuuts still need to be answered by the other party!</p>
+    {% if not waitingTuuts %}
+        <p>
+            <em>No tuuts waiting!</em>
+        </p>
+    {% endif %}
+    {% for tuut in waitingTuuts %}
+        <div class="card mb-1">
+            <div class="card-body">
+                <p>At {{ tuut.datetime|date }}</p>
+                {% if tuut.initiator %}
+                    {{ tuut.initiator.username  }}
+                {% else %}
+                    <i>pending</i>
+                {% endif %}
+                =>
+                {% if tuut.receiver %}
+                    {{ tuut.receiver.username }}
+                {% else %}
+                    <i>pending</i>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    <h4>Historical tuuts</h4>
+    <p>For now, only the last 30 tuuts will be shown.</p>
+    {% if not waitingTuuts %}
+        <p>
+            <em>No tuuts!</em>
+        </p>
+    {% endif %}
+    {% for tuut in historicalTuuts %}
+        <div class="card mb-1">
+            <div class="card-body">
+                <p>At {{ tuut.datetime|date }}</p>
+                {% if tuut.initiator %}
+                    {{ tuut.initiator.username  }}
+                {% else %}
+                    <i>pending</i>
+                {% endif %}
+                =>
+                {% if tuut.receiver %}
+                    {{ tuut.receiver.username }}
+                {% else %}
+                    <i>pending</i>
+                {% endif %}
+                <p>
+                    Result: <strong>{{ tuut.status }}</strong>
+                    {% if tuut.status in ['rejected', 'acknowledged'] %}
+                        (by tuteraar)
+                    {% else %}
+                        (by receiver)
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
